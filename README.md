@@ -2,6 +2,7 @@
 ### **School project**
 ### by Gabi Levit, Dolev Telem and Omer Attia
 
+TODO:
 - [x] Recieve Integers
 - [ ] Recieve Booleans
 - [ ] Perform all arithmatic operations (missing modolu)
