@@ -33,7 +33,8 @@ tokens = (
     'ZAP',
     'TRUE',
     'FALSE',
-    'LAMBDA'
+    'LAMBDA',
+    'COMMENT'
 )
 
 t_PLUS      = r'\+'
@@ -90,11 +91,11 @@ def t_LAMBDA(t):
     return t
 
 def t_TRUE(t):
-    r'true'
+    r'True'
     return t
 
 def t_FALSE(t):
-    r'false'
+    r'False'
     return t
 
 def t_IDENTIFIER(t):
@@ -109,6 +110,10 @@ def t_NUMBER(t):
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
+
+def t_COMMENT(t):
+    r'\#.*'
+    pass
 
 def t_error(t):
     print(f"Illegal character '{t.value[0]}'")

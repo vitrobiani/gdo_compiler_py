@@ -34,6 +34,8 @@ class Interpreter:
             self.evaluate(node[1])
         elif node[0] == 'lambda':
             return ('lambda', node[1], node[2])
+        elif node[0] == 'comment':
+            pass
 
 
 
@@ -60,7 +62,7 @@ class Interpreter:
         elif node[0] == '*':
             return self.evaluate(node[1]) * self.evaluate(node[2])
         elif node[0] == '/':
-            return self.evaluate(node[1]) / self.evaluate(node[2])
+            return (int) (self.evaluate(node[1]) / self.evaluate(node[2]))
         elif node[0] == '%':
             return self.evaluate(node[1]) % self.evaluate(node[2])
         elif node[0] == '>':

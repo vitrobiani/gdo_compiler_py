@@ -145,7 +145,10 @@ def p_empty(p):
     p[0] = None
 
 def p_error(p):
-    print(f"Syntax error at '{p.value}'")
+    try:
+        print(f"Syntax error at '{p.value}'")
+    except:
+        print("Error while parsing syntax error")
 
 parser = yacc.yacc()
 
