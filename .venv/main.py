@@ -14,7 +14,6 @@ def interpret_code(code):
     result = parser.parse(code, lexer=lexer)
     if result:
         try:
-            semantic_analyzer.analyze(result)
             interpreter.interpret(result)
         except Exception as e:
             print(f"Error: {e}")
@@ -48,6 +47,9 @@ def main():
                 break
             if not s:
                 continue
+            elif s == 'q' or s == 'Q' or s == 'quit' or s == 'exit':
+                print("See You Later Aligator! (^*^)")
+                break
             interpret_code(s)
 
 

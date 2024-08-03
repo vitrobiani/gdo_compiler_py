@@ -1,13 +1,19 @@
-# parser.py
-import ply.yacc as yacc
 from lexer import tokens
+import ply.yacc as yacc
 
+# Define precedence and associativity
 precedence = (
+    ('left', 'OR'),
+    ('left', 'AND'),
+    ('left', 'EQ', 'NEQ'),
+    ('left', 'GT', 'LT', 'GE', 'LE'),
     ('left', 'PLUS', 'MINUS'),
-    ('left', 'TIMES', 'DIVIDE'),
-    ('right', 'UMINUS'),
+    ('left', 'TIMES', 'DIVIDE', 'MODULO'),
+    ('right', 'NOT'),
+    ('right', 'UMINUS')
 )
 
+# Define grammar rules
 def p_program(p):
     '''program : statement_list'''
     p[0] = ('program', p[1])
@@ -21,98 +27,118 @@ def p_statement_list(p):
         p[0] = p[1] + [p[2]]
 
 def p_statement(p):
-    '''statement : expression_statement
+    '''statement : assignment_statement
                  | print_statement
                  | if_statement
-                 | assignment_statement
                  | function_definition
-                 | return_statement'''
+                 | return_statement
+                 | expression_statement'''
     p[0] = p[1]
 
-def p_function_definition(p):
-    '''function_definition : ZAP ID LPAREN param_list RPAREN LBRACE statement_list RBRACE'''
-    p[0] = ('function_definition', p[2], p[4], p[7])
+def p_assignment_statement(p):
+    '''assignment_statement : IDENTIFIER ASSIGN expression SEMICOLON'''
+    p[0] = ('assign', p[1], p[3])
 
-def p_param_list(p):
-    '''param_list : ID
-                  | param_list COMMA ID
-                  | empty'''
+def p_print_statement(p):
+    '''print_statement : PRINT LPAREN expression RPAREN SEMICOLON'''
+    p[0] = ('print', p[3])
+
+def p_if_statement(p):
+    '''if_statement : IF LPAREN expression RPAREN block elseif_list else_block'''
+    p[0] = ('if', p[3], p[5], p[6], p[7])
+
+def p_elseif_list(p):
+    '''elseif_list : elseif
+                   | elseif_list elseif
+                   | empty'''
     if len(p) == 2:
-        if p[1] is None:
-            p[0] = []
-        else:
-            p[0] = [p[1]]
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[2]]
+
+def p_elseif(p):
+    '''elseif : ELSEIF LPAREN expression RPAREN block'''
+    p[0] = ('elseif', p[3], p[5])
+
+def p_else_block(p):
+    '''else_block : ELSE block
+                  | empty'''
+    p[0] = p[1]
+
+def p_block(p):
+    '''block : LBRACE statement_list RBRACE'''
+    p[0] = p[2]
+
+def p_function_definition(p):
+    '''function_definition : ZAP IDENTIFIER LPAREN parameter_list RPAREN block'''
+    p[0] = ('function', p[2], p[4], p[6])
+
+def p_parameter_list(p):
+    '''parameter_list : IDENTIFIER
+                      | parameter_list COMMA IDENTIFIER
+                      | empty'''
+    if len(p) == 2:
+        p[0] = [p[1]]
     else:
         p[0] = p[1] + [p[3]]
 
-
 def p_return_statement(p):
-    '''return_statement : RETURN expression SEMI'''
+    '''return_statement : RETURN expression SEMICOLON'''
     p[0] = ('return', p[2])
 
-def p_print_statement(p):
-    '''print_statement : PRINT expression SEMI'''
-    p[0] = ('print', p[2])
-
-def p_if_statement(p):
-    '''if_statement : IF expression LBRACE statement_list RBRACE
-                    | IF expression LBRACE statement_list RBRACE ELSE LBRACE statement_list RBRACE'''
-    if len(p) == 6:
-        p[0] = ('if', p[2], p[4])
-    else:
-        p[0] = ('if_else', p[2], p[4], p[8])
-
-def p_assignment_statement(p):
-    '''assignment_statement : ID ASSIGN expression SEMI'''
-    p[0] = ('assign', p[1], p[3])
-
 def p_expression_statement(p):
-    '''expression_statement : expression SEMI'''
+    '''expression_statement : expression SEMICOLON'''
     p[0] = p[1]
 
-def p_expression_binop(p):
-    '''expression : expression PLUS expression
+def p_expression(p):
+    '''expression : NUMBER
+                  | IDENTIFIER
+                  | TRUE
+                  | FALSE
+                  | LPAREN expression RPAREN
+                  | expression PLUS expression
                   | expression MINUS expression
                   | expression TIMES expression
                   | expression DIVIDE expression
+                  | expression MODULO expression
                   | expression GT expression
                   | expression LT expression
                   | expression GE expression
                   | expression LE expression
-                  | expression EQ expression'''
-    p[0] = ('binop', p[2], p[1], p[3])
-
-def p_expression_group(p):
-    '''expression : LPAREN expression RPAREN'''
-    p[0] = p[2]
-
-def p_expression_number(p):
-    '''expression : NUMBER'''
-    p[0] = ('number', p[1])
-
-def p_expression_id(p):
-    '''expression : ID'''
-    p[0] = ('id', p[1])
-
-def p_expression_uminus(p):
-    '''expression : MINUS expression %prec UMINUS'''
-    p[0] = ('uminus', p[2])
-
-def p_expression_function_call(p):
-    '''expression : ID LPAREN arg_list RPAREN'''
-    p[0] = ('call', p[1], p[3])
-
-def p_arg_list(p):
-    '''arg_list : expression
-                | arg_list COMMA expression
-                | empty'''
+                  | expression EQ expression
+                  | expression NEQ expression
+                  | expression AND expression
+                  | expression OR expression
+                  | NOT expression %prec NOT
+                  | MINUS expression %prec UMINUS
+                  | function_call
+                  | lambda_expression'''
     if len(p) == 2:
-        if p[1] is None:
-            p[0] = []
+        p[0] = p[1]
+    elif len(p) == 3:
+        p[0] = ('not', p[2]) if p[1] == '!' else ('uminus', p[2])
+    elif len(p) == 4:
+        if p[1] == '(':
+            p[0] = p[2]
         else:
-            p[0] = [p[1]]
+            p[0] = (p[2], p[1], p[3])
+
+def p_argument_list(p):
+    '''argument_list : expression
+                     | argument_list COMMA expression
+                     | empty'''
+    if len(p) == 2:
+        p[0] = [p[1]]
     else:
         p[0] = p[1] + [p[3]]
+
+def p_lambda_expression(p):
+    '''lambda_expression : IDENTIFIER ASSIGN LAMBDA LPAREN parameter_list RPAREN COLON LBRACE expression RBRACE'''
+    p[0] = ('lambda', p[1], p[5], p[8])
+
+def p_function_call(p):
+    '''function_call : IDENTIFIER LPAREN argument_list RPAREN'''
+    p[0] = ('call', p[1], p[3])
 
 def p_empty(p):
     '''empty :'''

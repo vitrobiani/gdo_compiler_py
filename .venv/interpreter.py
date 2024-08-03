@@ -1,92 +1,121 @@
-class Interpreter:
-    def __init__(self):
-        self.global_env = {}
-        self.call_stack = []
-
-    def interpret(self, node):
-        node_type = node[0]
-        if node_type == 'program':
-            for statement in node[1]:
-                self.interpret(statement)
-        elif node_type == 'assign':
-            var_name = node[1]
-            var_value = self.evaluate(node[2])
-            self.global_env[var_name] = var_value
-        elif node_type == 'binop':
-            left_value = self.evaluate(node[2])
-            right_value = self.evaluate(node[3])
-            return self._apply_binop(node[1], left_value, right_value)
-        elif node_type == 'uminus':
-            return -self.evaluate(node[1])
-        elif node_type == 'number':
-            return node[1]
-        elif node_type == 'id':
-            return self.global_env.get(node[1], 0)
-        elif node_type == 'if':
-            condition = self.evaluate(node[1])
-            if condition:
-                self.interpret(node[2])
-        elif node_type == 'if_else':
-            condition = self.evaluate(node[1])
-            if condition:
-                self.interpret(node[2])
-            else:
-                self.interpret(node[3])
-        elif node_type == 'print':
-            value = self.evaluate(node[1])
-            print(value)
-        elif node_type == 'return':
-            raise ReturnException(self.evaluate(node[1]))
-        elif node_type == 'function_definition':
-            func_name = node[1]
-            params = node[2]
-            body = node[3]
-            self.global_env[func_name] = ('lambda', params, body)
-        elif node_type == 'call':
-            func = self.global_env.get(node[1])
-            if func is None or func[0] != 'lambda':
-                raise Exception(f"'{node[1]}' is not a callable function")
-            args = [self.evaluate(arg) for arg in node[2]]
-            return self._call_function(func, args)
-
-    def evaluate(self, node):
-        return self.interpret(node)
-
-    def _apply_binop(self, operator, left, right):
-        if operator == '+':
-            return left + right
-        elif operator == '-':
-            return left - right
-        elif operator == '*':
-            return left * right
-        elif operator == '/':
-            return left / right
-        elif operator == '>':
-            return int(left > right)
-        elif operator == '<':
-            return int(left < right)
-        elif operator == '>=':
-            return int(left >= right)
-        elif operator == '<=':
-            return int(left <= right)
-        elif operator == '==':
-            return int(left == right)
-
-    def _call_function(self, func, args):
-        param_names, body = func[1], func[2]
-        local_env = self.global_env.copy()
-        for param_name, arg in zip(param_names, args):
-            local_env[param_name] = arg
-        self.call_stack.append(self.global_env)
-        self.global_env = local_env
-        try:
-            self.interpret(body)
-        except ReturnException as e:
-            return e.value
-        finally:
-            self.global_env = self.call_stack.pop()
-
-
 class ReturnException(Exception):
     def __init__(self, value):
         self.value = value
+
+class Interpreter:
+    def __init__(self):
+        self.variables = {}
+        self.functions = {}
+
+    def interpret(self, node):
+        if node[0] == 'program':
+            for stmt in node[1]:
+                self.interpret(stmt)
+        elif node[0] == 'assign':
+            self.variables[node[1]] = self.evaluate(node[2])
+        elif node[0] == 'print':
+            print(self.evaluate(node[1]))
+        elif node[0] == 'if':
+            condition = self.evaluate(node[1])
+            if condition:
+                self.interpret(('program', node[2]))
+            else:
+                for elseif in node[3]:
+                    if elseif and self.evaluate(elseif[1]):
+                        self.interpret(('program', elseif[2]))
+                        return
+                if node[4]:
+                    self.interpret(('program', node[4]))
+        elif node[0] == 'function':
+            self.functions[node[1]] = (node[2], node[3])
+        elif node[0] == 'return':
+            raise ReturnException(self.evaluate(node[1]))
+        elif node[0] == 'expression_statement':
+            self.evaluate(node[1])
+        elif node[0] == 'lambda':
+            return ('lambda', node[1], node[2])
+
+
+
+    def evaluate(self, node):
+        if isinstance(node, int) or isinstance(node, bool):
+            return node
+        elif isinstance(node, str):
+            if node in self.variables:
+                return self.variables[node]
+            elif node == 'true':
+                return True
+            elif node == 'false':
+                return False
+            else:
+                raise NameError(f"Undefined variable '{node}'")
+        elif node[0] == 'not':
+            return not self.evaluate(node[1])
+        elif node[0] == 'uminus':
+            return -self.evaluate(node[1])
+        elif node[0] == '+':
+            return self.evaluate(node[1]) + self.evaluate(node[2])
+        elif node[0] == '-':
+            return self.evaluate(node[1]) - self.evaluate(node[2])
+        elif node[0] == '*':
+            return self.evaluate(node[1]) * self.evaluate(node[2])
+        elif node[0] == '/':
+            return self.evaluate(node[1]) / self.evaluate(node[2])
+        elif node[0] == '%':
+            return self.evaluate(node[1]) % self.evaluate(node[2])
+        elif node[0] == '>':
+            return self.evaluate(node[1]) > self.evaluate(node[2])
+        elif node[0] == '<':
+            return self.evaluate(node[1]) < self.evaluate(node[2])
+        elif node[0] == '>=':
+            return self.evaluate(node[1]) >= self.evaluate(node[2])
+        elif node[0] == '<=':
+            return self.evaluate(node[1]) <= self.evaluate(node[2])
+        elif node[0] == '==':
+            return self.evaluate(node[1]) == self.evaluate(node[2])
+        elif node[0] == '!=':
+            return self.evaluate(node[1]) != self.evaluate(node[2])
+        elif node[0] == '&&':
+            return self.evaluate(node[1]) and self.evaluate(node[2])
+        elif node[0] == '||':
+            return self.evaluate(node[1]) or self.evaluate(node[2])
+        elif node[0] == 'call':
+            return self.call_function(node[1], node[2])
+        elif node[0] == 'lambda':
+            return ('lambda', node[1], node[2])
+
+    def call_function(self, name, args):
+        if name in self.functions:
+            params, body = self.functions[name]
+            if len(params) != len(args):
+                raise Exception(f"Function '{name}' expects {len(params)} arguments but got {len(args)}")
+            local_vars = self.variables.copy()
+            for param, arg in zip(params, args):
+                self.variables[param] = self.evaluate(arg)
+            try:
+                self.interpret(('program', body))
+            except ReturnException as e:
+                return e.value
+            finally:
+                self.variables = local_vars
+        elif name in self.variables:
+            lambda_info = self.variables[name]
+            if lambda_info[0] == 'lambda':
+                return self.call_lambda(lambda_info[1], lambda_info[2], args)
+            else:
+                raise Exception(f"'{name}' is not a function or lambda")
+        else:
+            raise Exception(f"Function '{name}' is not defined")
+
+    def call_lambda(self, params, body, args):
+        if len(params) != len(args):
+            raise Exception(f"Lambda function expects {len(params)} arguments but got {len(args)}")
+        local_vars = self.variables.copy()
+        for param, arg in zip(params, args):
+            self.variables[param] = self.evaluate(arg)
+        try:
+            return self.evaluate(body)
+        finally:
+            self.variables = local_vars
+
+interpreter = Interpreter()
