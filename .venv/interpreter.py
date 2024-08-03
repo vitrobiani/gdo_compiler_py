@@ -33,9 +33,8 @@ class Interpreter:
         elif node[0] == 'expression_statement':
             self.evaluate(node[1])
         elif node[0] == 'lambda':
-            return ('lambda', node[1], node[2])
-        elif node[0] == 'comment':
-            pass
+            self.functions[node[1]] = (node[2], [('return',node[3])])
+            self.variables[node[1]] = ('lambda',node[2], [('return',node[3])])
 
 
 
@@ -45,9 +44,9 @@ class Interpreter:
         elif isinstance(node, str):
             if node in self.variables:
                 return self.variables[node]
-            elif node == 'true':
+            elif node == 'True':
                 return True
-            elif node == 'false':
+            elif node == 'False':
                 return False
             else:
                 raise NameError(f"Undefined variable '{node}'")
@@ -83,6 +82,8 @@ class Interpreter:
             return self.evaluate(node[1]) or self.evaluate(node[2])
         elif node[0] == 'call':
             return self.call_function(node[1], node[2])
+        elif node[0] == 'call_lambda':
+            return self.call_lambda(node[1], node[2])
         elif node[0] == 'lambda':
             return ('lambda', node[1], node[2])
 
@@ -103,7 +104,7 @@ class Interpreter:
         elif name in self.variables:
             lambda_info = self.variables[name]
             if lambda_info[0] == 'lambda':
-                return self.call_lambda(lambda_info[1], lambda_info[2], args)
+                return self.call(lambda_info[1], lambda_info[2], args)
             else:
                 raise Exception(f"'{name}' is not a function or lambda")
         else:

@@ -32,7 +32,8 @@ def p_statement(p):
                  | if_statement
                  | function_definition
                  | return_statement
-                 | expression_statement'''
+                 | expression_statement
+                 | lambda_expression'''
     p[0] = p[1]
 
 def p_assignment_statement(p):
@@ -112,7 +113,8 @@ def p_expression(p):
                   | NOT expression %prec NOT
                   | MINUS expression %prec UMINUS
                   | function_call
-                  | lambda_expression'''
+                  | anonymous_function
+                  | lambda_call'''
     if len(p) == 2:
         p[0] = p[1]
     elif len(p) == 3:
@@ -133,8 +135,16 @@ def p_argument_list(p):
         p[0] = p[1] + [p[3]]
 
 def p_lambda_expression(p):
-    '''lambda_expression : IDENTIFIER ASSIGN LAMBDA LPAREN parameter_list RPAREN COLON LBRACE expression RBRACE'''
-    p[0] = ('lambda', p[1], p[5], p[8])
+    '''lambda_expression : IDENTIFIER ASSIGN LAMBDA LPAREN parameter_list RPAREN COLON LBRACE expression RBRACE SEMICOLON'''
+    p[0] = ('lambda', p[1], p[5], p[9])
+
+def p_anonymous_function(p):
+    '''anonymous_function : LAMBDA LPAREN parameter_list RPAREN COLON LBRACE expression RBRACE'''
+    p[0] = ('lambda', "_", p[3], p[7])
+
+def p_lambda_call(p):
+    '''lambda_call : IDENTIFIER LBRACE argument_list RBRACE'''
+    p[0] = ('call_lambda', p[1], p[3])
 
 def p_function_call(p):
     '''function_call : IDENTIFIER LPAREN argument_list RPAREN'''

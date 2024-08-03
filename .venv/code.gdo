@@ -1,16 +1,23 @@
-#addNums = lambda (a, b) : {a + b};
-#x = addNums(3, 5);
-#print(x);
+addNums = lambda (a,b):{a+b};
+x = addNums(3, 5);
+print(x);
 
-zap addNums(a,b){
-    return a+b;
-}
+#zap addNums(a,b){
+#    return a+b;
+#}
 
 zap fib(n) {
     if (n == 0) { return 0; }
     if (n == 1) { return 1; }
     return addNums(fib(n - 1), fib(n - 2));
 }
-x = fib(5);
+
+zap factorial(n){
+    if(n==0) { return 1; }
+    return n * factorial(n-1);
+}
+
+x = fib(8);
 print(x);
+print(factorial(5));
 
