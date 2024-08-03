@@ -7,10 +7,11 @@ TODO Compiler:
 - [X] Recieve Booleans
 - [X] Perform all arithmatic operations
 - [X] Perform Boolean operations (and, or, not)
-- [X] Perform comparison operations (>, <, ==)
+- [X] Perform comparison operations (>, <, ==. >=, <=)
 - [X] Named functions
-- [ ] Lambda expressions
-- [ ] Function application??
+- [X] Basic lambda expressions
+- [ ] advanced lambda expressions (her example and laambda expressions that can be given to functions as args)
+- [X] Function application (function calling)
 - [X] Recursion (tested only with fib function)
 - [X] Interpreter mode like python
 - [ ] Files need to end in .lambda (.gdo at the moment)
@@ -178,6 +179,21 @@ output:
 </details>
 <details>
 
+<summary>Lambda Expressions</summary>
+you define lambda expressions as variables, like so:
+
+```
+addNums = lambda (a,b):{a+b};
+x = addNums(3, 5);
+print(x);
+```
+output:
+```
+8
+```
+</details>
+<details>
+
 <summary></summary>
 
 exaple:
@@ -188,45 +204,7 @@ exaple:
 
 ## BNF Grammer
 ```
-S' -> program
-program -> statement_list
-statement_list -> statement
-statement_list -> statement_list statement
-statement -> assign_statement
-statement -> print_statement
-statement -> if_statement
-statement -> if_else_statement
-statement -> function_definition
-statement -> return_statement
-statement -> expr SEMI
-assign_statement -> ID ASSIGN expr SEMI
-print_statement -> PRINT expr SEMICOLON
-if_statement -> IF expr LBRACE statement_list RBRACE
-if_else_statement -> IF expr LBRACE statement_list RBRACE ELSE LBRACE statement_list RBRACE
-function_definition -> ZAP ID LPAREN param_list RPAREN LBRACE statement_list RBRACE
-param_list -> ID
-param_list -> param_list COMMA ID
-param_list -> empty
-return_statement -> RETURN expr SEMI
-expr -> expr PLUS expr
-expr -> expr MINUS expr
-expr -> expr TIMES expr
-expr -> expr DIVIDE expr
-expr -> expr EQ expr
-expr -> expr NE expr
-expr -> expr LT expr
-expr -> expr LE expr
-expr -> expr GT expr
-expr -> expr GE expr
-expr -> MINUS expr
-expr -> LPAREN expr RPAREN
-expr -> NUMBER
-expr -> ID
-expr -> ID LPAREN arg_list RPAREN
-arg_list -> expr
-arg_list -> arg_list COMMA expr
-arg_list -> empty
-empty -> <empty>
+
 ```
 
 
