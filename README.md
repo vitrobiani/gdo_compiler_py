@@ -132,6 +132,7 @@ output:
 
 <summary>If statements</summary>
 You could perform if, elseif and else functions using the greater then (>), greater equal (>=), lesser then (<), lesser equal (<=), equals (==) and not equal (!=) like so:
+
 ```
 x = 10;
 if(x != 10){
