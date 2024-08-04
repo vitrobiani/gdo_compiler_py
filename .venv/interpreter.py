@@ -29,12 +29,16 @@ class Interpreter:
         elif node[0] == 'function':
             self.functions[node[1]] = (node[2], node[3])
         elif node[0] == 'return':
+            if node[1] == None:
+                return
             raise ReturnException(self.evaluate(node[1]))
         elif node[0] == 'expression_statement':
             self.evaluate(node[1])
         elif node[0] == 'lambda':
             self.functions[node[1]] = (node[2], [('return',node[3])])
             self.variables[node[1]] = ('lambda',node[2], [('return',node[3])])
+        elif node[0] == 'call':
+            self.evaluate(node)
 
 
 
@@ -50,6 +54,8 @@ class Interpreter:
                 return False
             else:
                 raise NameError(f"Undefined variable '{node}'")
+        elif node == None:
+            raise Exception("Blank space where it shoudn't be")
         elif node[0] == 'not':
             return not self.evaluate(node[1])
         elif node[0] == 'uminus':

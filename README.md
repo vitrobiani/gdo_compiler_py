@@ -131,7 +131,15 @@ output:
 <details>
 
 <summary>If statements</summary>
-You could perform if, elseif and else functions using the greater then (>), greater equal (>=), lesser then (<), lesser equal (<=), equals (==) and not equal (!=) like so:
+
+You could perform if, elseif and else functions using: <br />
+greater then (>), <br />
+greater equal (>=),  <br />
+lesser then (<), <br />
+lesser equal (<=),  <br />
+equals (==),  <br />
+not equal (!=)  <br />
+like so:
 
 ```
 x = 10;
@@ -153,7 +161,7 @@ x = 10;
 y = x * 2;
 if(x != 10 || y == 20){
   print(True);
-} elseif (x <= 15) {
+} elseif (x >= 15) {
   print(False);
 } else {
   print(x);
@@ -178,6 +186,70 @@ output:
 </details>
 <details>
 
+<summary>Line by line interpreter Mode</summary>
+
+When activating the interpreter without any arguments (i.e no files)
+you enter line-by-line mode. <br />
+in this mode you can run commands like the bash or python terminal. <br />
+SIM LEV: semicolons are still required! <br />
+
+You will be greeted with this prompt:
+```
+Line-By-Line Mode: (;!)
+(^u^)>> 
+```
+if your last command was errored out the interpreter won't like it:
+```
+Line-By-Line Mode: (;!)
+(^u^)>> a = ;
+Error: Blank space where it shoudn't be
+(-_-)>> 
+```
+and happy if it passed:
+```
+Line-By-Line Mode: (;!)
+(^u^)>> a = ;
+Error: Blank space where it shoudn't be
+(-_-)>> a = 5;
+(^-^)>> 
+```
+you can use the r expression to redo a command, <br />
+you could put several r's to redo srveral commands back
+```
+Line-By-Line Mode: (;!)
+(^u^)>> x = 5;
+(^-^)>> y = 6;
+(^-^)>> z = 7;
+(^-^)>> print(x);
+5
+(^-^)>> print(y);
+6
+(^-^)>> print(z);
+7
+(^-^)>> r
+7
+(^-^)>> rr
+6
+(^-^)>> rrr
+5
+```
+
+And to close the application you can simply press what ever you know that closes application, <br />
+as it would most likely work here too!. <br/>
+>q, Q, quit, Quit, exit, Exit, :wq, :q, :q! <br/>
+
+all this will get you out.
+
+```
+Line-By-Line Mode: (;!)
+(^u^)>> q
+See You Later Aligator! (^_^)
+```
+
+
+</details>
+<details>
+
 <summary></summary>
 
 exaple:
@@ -185,48 +257,4 @@ exaple:
 ```
 </details>
 
-
 ## BNF Grammer
-```
-S' -> program
-program -> statement_list
-statement_list -> statement
-statement_list -> statement_list statement
-statement -> assign_statement
-statement -> print_statement
-statement -> if_statement
-statement -> if_else_statement
-statement -> function_definition
-statement -> return_statement
-statement -> expr SEMI
-assign_statement -> ID ASSIGN expr SEMI
-print_statement -> PRINT expr SEMICOLON
-if_statement -> IF expr LBRACE statement_list RBRACE
-if_else_statement -> IF expr LBRACE statement_list RBRACE ELSE LBRACE statement_list RBRACE
-function_definition -> ZAP ID LPAREN param_list RPAREN LBRACE statement_list RBRACE
-param_list -> ID
-param_list -> param_list COMMA ID
-param_list -> empty
-return_statement -> RETURN expr SEMI
-expr -> expr PLUS expr
-expr -> expr MINUS expr
-expr -> expr TIMES expr
-expr -> expr DIVIDE expr
-expr -> expr EQ expr
-expr -> expr NE expr
-expr -> expr LT expr
-expr -> expr LE expr
-expr -> expr GT expr
-expr -> expr GE expr
-expr -> MINUS expr
-expr -> LPAREN expr RPAREN
-expr -> NUMBER
-expr -> ID
-expr -> ID LPAREN arg_list RPAREN
-arg_list -> expr
-arg_list -> arg_list COMMA expr
-arg_list -> empty
-empty -> <empty>
-```
-
-

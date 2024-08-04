@@ -1,7 +1,6 @@
 from lexer import tokens
 import ply.yacc as yacc
 
-# Define precedence and associativity
 precedence = (
     ('left', 'OR'),
     ('left', 'AND'),
@@ -13,7 +12,6 @@ precedence = (
     ('right', 'UMINUS')
 )
 
-# Define grammar rules
 def p_program(p):
     '''program : statement_list'''
     p[0] = ('program', p[1])
@@ -114,7 +112,8 @@ def p_expression(p):
                   | MINUS expression %prec UMINUS
                   | function_call
                   | anonymous_function
-                  | lambda_call'''
+                  | lambda_call
+                  | empty'''
     if len(p) == 2:
         p[0] = p[1]
     elif len(p) == 3:
@@ -156,9 +155,9 @@ def p_empty(p):
 
 def p_error(p):
     try:
-        print(f"Syntax error at '{p.value}'")
+        raise Exception(f"Syntax error at '{p.value}' on line '{p.lineno}'")
     except:
-        print("Error while parsing syntax error")
+        raise Exception(f"while parsing syntax error")
 
 parser = yacc.yacc()
 
