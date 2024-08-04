@@ -7,10 +7,11 @@ TODO Compiler:
 - [X] Recieve Booleans
 - [X] Perform all arithmatic operations
 - [X] Perform Boolean operations (and, or, not)
-- [X] Perform comparison operations (>, <, ==)
+- [X] Perform comparison operations (>, <, ==. >=, <=)
 - [X] Named functions
-- [ ] Lambda expressions
-- [ ] Function application??
+- [X] Basic lambda expressions
+- [ ] advanced lambda expressions (her example and laambda expressions that can be given to functions as args)
+- [X] Function application (function calling)
 - [X] Recursion (tested only with fib function)
 - [X] Interpreter mode like python
 - [ ] Files need to end in .lambda (.gdo at the moment)
@@ -161,7 +162,7 @@ x = 10;
 y = x * 2;
 if(x != 10 || y == 20){
   print(True);
-} elseif (x >= 15) {
+} elseif (x <= 15) {
   print(False);
 } else {
   print(x);
