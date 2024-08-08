@@ -14,10 +14,16 @@ TODO Compiler:
 - [X] Function application (function calling)
 - [X] Recursion (tested only with fib function)
 - [X] Interpreter mode like python
-- [ ] Files need to end in .lambda (.gdo at the moment)
+- [X] Files need to end in .lambda
 - [ ] Type errors
 - [ ] Comprehensive errors (line numbers, place in line etc)
 - [X] (optional) Comments
+- [ ] Function return nothing not working properly
+- [ ] 
+- [ ] 
+- [ ] 
+- [ ] 
+
 
 TODO Part B:
 - [ ] Question 1 (Q1)
@@ -26,6 +32,7 @@ TODO Part B:
 - [ ] Question 4 (Q4)
 - [ ] Question 5 (Q5)
 
+***
 
 ## Documentation
 <details>
@@ -194,11 +201,40 @@ you enter line-by-line mode. <br />
 in this mode you can run commands like the bash or python terminal. <br />
 SIM LEV: semicolons are still required! <br />
 
+To activate this mode you either need to compile the main code file lambda.py<b />
+or if you are on windows you can run the executable.
+
+### Running the executable (windows only!)
+You can run the lambda.exe file or just double click like any other app.
+
+```commandline
+.\lambda.exe
+```
+
+### compiling the main file
+To compile the main file lambda.py you call the python interpreter.<b />
+If you are in the compiler directory run:
+```commandline
+python lambda.py
+```
+
+if you are in another directory you will need to know the path to the compiler directory and run:<b />
+```commandline
+python ./path/to/compiler/lambda.py
+```
+or for windows:
+```commandline
+python .\path\to\compiler\lambda.py
+```
+> Windows uses backslash as opposed unix based systems that use forward slash 
+
+### Interpreter details
 You will be greeted with this prompt:
 ```
 Line-By-Line Mode: (;!)
 (^u^)>> 
 ```
+From here you can write code freely.
 if your last command was errored out the interpreter won't like it:
 ```
 Line-By-Line Mode: (;!)
@@ -251,11 +287,44 @@ See You Later Aligator! (^_^)
 </details>
 <details>
 
-<summary></summary>
+<summary>Compiling a code file</summary>
 
-exaple:
+To compile a file with code in it you first need to make sure that the file ends in .lambda <b />
+as the compiler won't accept any other suffix.
+The code must either be in the file of the compiler, <b />
+or you could run the compiler by referencing its exact location. <b />
+If you're on windows there is the option of activating the executable file with the code file. <b />
+
+> you could add the compiler directory to your system PATH but we won't do any of that
+
+### Running the executable (windows only!)
+You can run the lambda.exe file or just double click like any other app.
+```commandline
+.\lambda.exe
 ```
+
+### Code file in the compiler
+```commandline
+python lambda.py code.lambda
 ```
+This is the easiest way as the code file is in the same directory as the compiler main file and so <b />
+you could run the python interpreter on the main file lambda.py giving it the code file (marked code.lambda)<b />
+as an argument.
+
+### Code file outside the compiler directory
+```commandline
+python ./path/to/compiler/lambda.py ./path/to/code/code.lambda
+```
+or for windows:
+```commandline
+python .\path\to\compiler\lambda.py .\path\to\code\code.lambda
+```
+> Windows uses backslash as opposed unix based systems that use forward slash 
+
+As you can see it is possible to compile code anywhere in your system as long as you have the path the compiler.
+
+
 </details>
 
+***
 ## BNF Grammer

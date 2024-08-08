@@ -26,7 +26,7 @@ def interpret_code(code):
 def main():
     if len(sys.argv) > 1:
         filename = sys.argv[1]
-        if filename.endswith('.gdo'):
+        if filename.endswith('.lambda'):
             try:
                 with open(filename, 'r') as file:
                     code = file.read()
@@ -34,7 +34,7 @@ def main():
             except FileNotFoundError:
                 print(f"File '{filename}' not found.")
         else:
-            print("Please provide a file with a '.gdo' extension.")
+            print("Please provide a file with a '.lambda' extension.")
     else:
         print("Line-By-Line Mode: (;!)")
         while True:
@@ -54,7 +54,7 @@ def main():
             if not s:
                 continue
             elif s == 'q' or s == 'Q' or s == 'quit' or s == 'Quit' or s == 'exit' or s == 'Exit' or s == ':wq' or s == ':q!' or s == ':q':
-                print("See You Later Aligator! (^_^)")
+                print("See You Later Aligator!")
                 break
             elif re.fullmatch(r'r+', s):
                 try:
