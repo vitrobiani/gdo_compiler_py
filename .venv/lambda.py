@@ -1,36 +1,39 @@
-import re
-import sys
-import random
+import re,sys,signal,time
+from pyreadline3 import Readline
+
 from lexer import lexer
 from parser import parser
-from semantic_analyzer import SemanticAnalyzer
 from interpreter import Interpreter
 
-semantic_analyzer = SemanticAnalyzer()
+exit_symbol = ["quit", "exit", "q", "e", ":q", ":wq", ":q!", "c"]
 interpreter = Interpreter()
 
 command_history = []
 
-def interpret_code(code):
+def interpret_code(code, add_to_command_history):
     err = 0
     try:
         result = parser.parse(code, lexer=lexer)
+        #print(result)
         if result:
             interpreter.interpret(result)
     except Exception as e:
         err = 1
         print(f"Error: {e}")
-    command_history.append((code,err))
+
+    if add_to_command_history:
+        command_history.append((code,err))
 
 
 def main():
+    signal.signal(signal.SIGINT, handler)
     if len(sys.argv) > 1:
         filename = sys.argv[1]
         if filename.endswith('.lambda'):
             try:
                 with open(filename, 'r') as file:
                     code = file.read()
-                    interpret_code(code)
+                    interpret_code(code, 0)
             except FileNotFoundError:
                 print(f"File '{filename}' not found.")
         else:
@@ -38,35 +41,48 @@ def main():
     else:
         print("Line-By-Line Mode: (;!)")
         while True:
+            add_to_command_history = 1
             try:
                 if command_history[-1][1] == 0:
-                    s = input('(^-^)>> ')
+                    s = input('(^-^)>> ').strip()
                 elif command_history[-1][1] == 1:
-                    s = input('(-_-)>> ')
-            except EOFError:
-                break
-            except KeyboardInterrupt:
-                print("See You Later Aligator! (^*^)")
-                break
+                    s = input('(-_-)>> ').strip()
             except IndexError:
-                s = input('(^u^)>> ')
+                s = input('(^u^)>> ').strip()
+            except Exception:
+                print("Something went wrong.")
+                break
 
             if not s:
                 continue
-            elif s == 'q' or s == 'Q' or s == 'quit' or s == 'Quit' or s == 'exit' or s == 'Exit' or s == ':wq' or s == ':q!' or s == ':q':
+            elif s.lower() in exit_symbol:
                 print("See You Later Aligator!")
+                time.sleep(1)
                 break
             elif re.fullmatch(r'r+', s):
+                add_to_command_history = 0
                 try:
+                    ch = [];
                     for i in range(len(s)):
-                        s = command_history.pop()[0]
+                        ch.append(command_history.pop())
+                    s = ch[-1][0]
+                    print(s)
+                    for i in range(len(ch)):
+                        command_history.append(ch.pop())
                 except Exception:
                     print("Not enough commands left.")
+                    for i in range(len(ch)):
+                        command_history.append(ch.pop())
                     continue
 
-            interpret_code(s)
+            interpret_code(s, add_to_command_history)
 
 
+def handler(signum, frame):
+    print("You forced interrupted!"
+          "\nGoodbye!")
+    time.sleep(1)
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()

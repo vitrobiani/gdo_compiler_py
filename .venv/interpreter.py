@@ -12,9 +12,15 @@ class Interpreter:
             for stmt in node[1]:
                 self.interpret(stmt)
         elif node[0] == 'assign':
-            self.variables[node[1]] = self.evaluate(node[2])
+            try:
+                self.variables[node[1]] = self.evaluate(node[2])
+            except Exception as e:
+                raise Exception(f'{e}, at line number {node[-1]}')
         elif node[0] == 'print':
-            print(self.evaluate(node[1]))
+            try:
+                print(self.evaluate(node[1]))
+            except Exception as e:
+                raise Exception(f'{e}, at line number {node[-1]}')
         elif node[0] == 'if':
             condition = self.evaluate(node[1])
             if condition:
@@ -27,19 +33,24 @@ class Interpreter:
                 if node[4]:
                     self.interpret(('program', node[4]))
         elif node[0] == 'function':
-            self.functions[node[1]] = (node[2], node[3])
+            try:
+                self.functions[node[1]] = (node[2], node[3])
+            except Exception as e:
+                raise Exception(f'{e}, at line number {node[-1]}')
         elif node[0] == 'return':
             if node[1] == None:
                 return
             raise ReturnException(self.evaluate(node[1]))
         elif node[0] == 'expression_statement':
-            self.evaluate(node[1])
+            try:
+                self.evaluate(node[1])
+            except Exception as e:
+                raise Exception(f'{e}, at line number {node[-1]}')
         elif node[0] == 'lambda':
             self.functions[node[1]] = (node[2], [('return',node[3])])
             self.variables[node[1]] = ('lambda',node[2], [('return',node[3])])
         elif node[0] == 'call':
             self.evaluate(node)
-
 
 
     def evaluate(self, node):
@@ -56,7 +67,7 @@ class Interpreter:
                 raise NameError(f"Undefined variable '{node}'")
         elif node == None:
             raise Exception("Blank space where it shoudn't be")
-        elif node[0] == 'not':
+        if node[0] == 'not':
             return not self.evaluate(node[1])
         elif node[0] == 'uminus':
             return -self.evaluate(node[1])
@@ -87,7 +98,10 @@ class Interpreter:
         elif node[0] == '||':
             return self.evaluate(node[1]) or self.evaluate(node[2])
         elif node[0] == 'call':
-            return self.call_function(node[1], node[2])
+            try:
+                return self.call_function(node[1], node[2])
+            except Exception as e:
+                raise Exception(f'{e}, at line number {node[-1]}')
         elif node[0] == 'call_lambda':
             return self.call_lambda(node[1], node[2])
         elif node[0] == 'lambda':
@@ -110,7 +124,7 @@ class Interpreter:
         elif name in self.variables:
             lambda_info = self.variables[name]
             if lambda_info[0] == 'lambda':
-                return self.call(lambda_info[1], lambda_info[2], args)
+                return self.call_function(lambda_info[1], lambda_info[2], args)
             else:
                 raise Exception(f"'{name}' is not a function or lambda")
         else:

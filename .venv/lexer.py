@@ -37,6 +37,7 @@ tokens = (
     'COMMENT'
 )
 
+t_ASSIGN    = r'='
 t_PLUS      = r'\+'
 t_MINUS     = r'-'
 t_TIMES     = r'\*'
@@ -51,7 +52,6 @@ t_GT        = r'>'
 t_LT        = r'<'
 t_GE        = r'>='
 t_LE        = r'<='
-t_ASSIGN    = r'='
 t_SEMICOLON = r';'
 t_LPAREN    = r'\('
 t_RPAREN    = r'\)'
@@ -116,7 +116,7 @@ def t_COMMENT(t):
     pass
 
 def t_error(t):
-    print(f"Illegal character '{t.value[0]}'")
+    raise Exception (f"Illegal character '{t.value[0]}', at line {t.lexer.lineno}")
     t.lexer.skip(1)
 
 lexer = lex.lex()

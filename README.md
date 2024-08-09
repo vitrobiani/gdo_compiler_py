@@ -10,17 +10,17 @@ TODO Compiler:
 - [X] Perform comparison operations (>, <, ==. >=, <=)
 - [X] Named functions
 - [X] Basic lambda expressions
-- [ ] advanced lambda expressions (her example and laambda expressions that can be given to functions as args)
+- [ ] advanced lambda expressions (her example and lambda expressions that can be given to functions as args)
 - [X] Function application (function calling)
-- [X] Recursion (tested only with fib function)
+- [X] Recursion 
 - [X] Interpreter mode like python
 - [X] Files need to end in .lambda
 - [ ] Type errors
-- [ ] Comprehensive errors (line numbers, place in line etc)
+- [ ] Comprehensive errors (line numbers)
 - [X] (optional) Comments
 - [ ] Function return nothing not working properly
-- [ ] 
-- [ ] 
+- [X] Fix the redo problem
+- [X] fix forced interruption
 - [ ] 
 - [ ] 
 
@@ -108,7 +108,7 @@ output:
 ```
 9
 ```
-You could also predorm recursion:
+You could also preform recursion:
 ```
 zap fib(n) {
     if (n == 0) { return 0; }

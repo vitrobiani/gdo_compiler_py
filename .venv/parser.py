@@ -9,7 +9,8 @@ precedence = (
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE', 'MODULO'),
     ('right', 'NOT'),
-    ('right', 'UMINUS')
+    ('right', 'UMINUS'),
+    ('right', 'ASSIGN')
 )
 
 def p_program(p):
@@ -31,24 +32,24 @@ def p_statement(p):
                  | function_definition
                  | return_statement
                  | expression_statement
-                 | lambda_expression'''
+                 | lambda_expression
+                 | comment'''
     p[0] = p[1]
 
 def p_assignment_statement(p):
     '''assignment_statement : IDENTIFIER ASSIGN expression SEMICOLON'''
-    p[0] = ('assign', p[1], p[3])
+    p[0] = ('assign', p[1], p[3], p.lineno(1))
 
 def p_print_statement(p):
     '''print_statement : PRINT LPAREN expression RPAREN SEMICOLON'''
-    p[0] = ('print', p[3])
+    p[0] = ('print', p[3], p.lineno(1))
 
 def p_if_statement(p):
     '''if_statement : IF LPAREN expression RPAREN block elseif_list else_block'''
-    p[0] = ('if', p[3], p[5], p[6], p[7])
+    p[0] = ('if', p[3], p[5], p[6], p[7], p.lineno(1))
 
 def p_elseif_list(p):
-    '''elseif_list : elseif
-                   | elseif_list elseif
+    '''elseif_list : elseif_list elseif
                    | empty'''
     if len(p) == 2:
         p[0] = [p[1]]
@@ -57,7 +58,7 @@ def p_elseif_list(p):
 
 def p_elseif(p):
     '''elseif : ELSEIF LPAREN expression RPAREN block'''
-    p[0] = ('elseif', p[3], p[5])
+    p[0] = ('elseif', p[3], p[5], p.lineno(1))
 
 def p_else_block(p):
     '''else_block : ELSE block
@@ -83,7 +84,7 @@ def p_parameter_list(p):
 
 def p_return_statement(p):
     '''return_statement : RETURN expression SEMICOLON'''
-    p[0] = ('return', p[2])
+    p[0] = ('return', p[2], p.lineno(1))
 
 def p_expression_statement(p):
     '''expression_statement : expression SEMICOLON'''
@@ -111,13 +112,12 @@ def p_expression(p):
                   | NOT expression %prec NOT
                   | MINUS expression %prec UMINUS
                   | function_call
-                  | anonymous_function
-                  | lambda_call
-                  | empty'''
+                  | lambda_call'''
+
     if len(p) == 2:
         p[0] = p[1]
     elif len(p) == 3:
-        p[0] = ('not', p[2]) if p[1] == '!' else ('uminus', p[2])
+        p[0] = ('not', p[2], p.lineno(1)) if p[1] == '!' else ('uminus', p[2], p.lineno(1))
     elif len(p) == 4:
         if p[1] == '(':
             p[0] = p[2]
@@ -134,30 +134,35 @@ def p_argument_list(p):
         p[0] = p[1] + [p[3]]
 
 def p_lambda_expression(p):
-    '''lambda_expression : IDENTIFIER ASSIGN LAMBDA LPAREN parameter_list RPAREN COLON LBRACE expression RBRACE SEMICOLON'''
-    p[0] = ('lambda', p[1], p[5], p[9])
+    '''lambda_expression : IDENTIFIER ASSIGN anonymous_function SEMICOLON'''
+    p[0] = ('lambda', p[1], p[5], p[9], p.lineno(1))
 
 def p_anonymous_function(p):
     '''anonymous_function : LAMBDA LPAREN parameter_list RPAREN COLON LBRACE expression RBRACE'''
-    p[0] = ('lambda', "_", p[3], p[7])
+    p[0] = ('lambda', "_", p[3], p[7], p.lineno(1))
 
 def p_lambda_call(p):
     '''lambda_call : IDENTIFIER LBRACE argument_list RBRACE'''
-    p[0] = ('call_lambda', p[1], p[3])
+    p[0] = ('call_lambda', p[1], p[3], p.lineno(1))
 
 def p_function_call(p):
     '''function_call : IDENTIFIER LPAREN argument_list RPAREN'''
-    p[0] = ('call', p[1], p[3])
+    p[0] = ('call', p[1], p[3], p.lineno(1))
 
 def p_empty(p):
     '''empty :'''
     p[0] = None
 
+def p_comment(p):
+    '''comment : COMMENT IDENTIFIER'''
+    p[0] = None
+
+
 def p_error(p):
-    try:
-        raise Exception(f"Syntax error at '{p.value}' on line '{p.lineno}'")
-    except:
-        raise Exception(f"while parsing syntax error")
+    if p:
+        print(f"Syntax error at '{p.value}' on line {p.lineno}")
+    else:
+        print("Syntax error at EOF")
 
 parser = yacc.yacc()
 
