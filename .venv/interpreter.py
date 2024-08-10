@@ -85,6 +85,10 @@ class Interpreter:
         elif node[0] == 'uminus':
             return -self.evaluate(node[1])
         elif node[0] == '+':
+            if isinstance(self.evaluate(node[1]), bool):
+                raise TypeError(f"'{node[1]}' Wrong Type")
+            if  isinstance(self.evaluate(node[2]), bool):
+                raise TypeError(f"'{node[2]}' Wrong Type")
             return self.evaluate(node[1]) + self.evaluate(node[2])
         elif node[0] == '-':
             return self.evaluate(node[1]) - self.evaluate(node[2])
