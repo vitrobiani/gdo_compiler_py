@@ -1,12 +1,9 @@
-
-#addNums = lambda (a,b):{a+b};
-#x = addNums(3, 5);
+addNums = lambda (a,b):{a+b};
+x = addNums(3, 5);
 
 #zap addNums(a,b){
 #    return a+b;
 #}
-
-
 
 zap Loop(n) {
     if (n == 0) {
@@ -15,16 +12,18 @@ zap Loop(n) {
     print(n);
     Loop(n-1);
 }
-Loop(5,6);
+Loop(5);
 
 zap fib(n) {
     if (n == 0) { return 0; }
     if (n == 1) { return 1; }
     return addNums(fib(n - 1), fib(n - 2));
 }
+println();
+println(fib(8));
 
-zap factorial(){
+zap factorial(n){
     if(n==0) { return 1; }
     return n * factorial(n-1);
 }
-
+println(factorial(5));

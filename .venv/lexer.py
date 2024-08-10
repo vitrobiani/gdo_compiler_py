@@ -25,6 +25,7 @@ tokens = (
     'LBRACE',
     'RBRACE',
     'COMMA',
+    'PRINTLN',
     'PRINT',
     'IF',
     'ELSE',
@@ -61,6 +62,10 @@ t_COMMA     = r','
 t_COLON     = r'\:'
 
 t_ignore = ' \t'
+
+def t_PRINTLN(t):
+    r'println'
+    return t
 
 def t_PRINT(t):
     r'print'
@@ -120,3 +125,4 @@ def t_error(t):
     t.lexer.skip(1)
 
 lexer = lex.lex()
+#lexer = lex.lex(debug=False)

@@ -1,14 +1,17 @@
 import re,sys,signal,time
 from pyreadline3 import Readline
-
 from lexer import lexer
 from parser import parser
 from interpreter import Interpreter
 
-exit_symbol = ["quit", "exit", "q", "e", ":q", ":wq", ":q!", "c"]
+exittime = 0
+exit_symbol = ["quit", "exit", "q", "e", ":q", ":wq", ":q!", "c", "x"]
 interpreter = Interpreter()
-
 command_history = []
+
+# Filling command history for easier use
+command_history.append(("foo = lambda(a):{lambda(b):{a+b}};", 0))
+command_history.append(("println((foo(5))(6));", 0))
 
 def interpret_code(code, add_to_command_history):
     err = 0
@@ -57,7 +60,7 @@ def main():
                 continue
             elif s.lower() in exit_symbol:
                 print("See You Later Aligator!")
-                time.sleep(1)
+                time.sleep(exittime)
                 break
             elif re.fullmatch(r'r+', s):
                 add_to_command_history = 0
@@ -81,7 +84,7 @@ def main():
 def handler(signum, frame):
     print("You forced interrupted!"
           "\nGoodbye!")
-    time.sleep(1)
+    time.sleep(exittime)
     sys.exit(0)
 
 if __name__ == '__main__':

@@ -41,8 +41,14 @@ def p_assignment_statement(p):
     p[0] = ('assign', p[1], p[3], p.lineno(1))
 
 def p_print_statement(p):
-    '''print_statement : PRINT LPAREN expression RPAREN SEMICOLON'''
-    p[0] = ('print', p[3], p.lineno(1))
+    '''print_statement : PRINTLN LPAREN expression RPAREN SEMICOLON
+                       | PRINTLN LPAREN empty RPAREN SEMICOLON
+                       | PRINT LPAREN expression RPAREN SEMICOLON
+                       | PRINT LPAREN empty SEMICOLON'''
+    if p[1] == 'print':
+        p[0] = ('print', p[3], p.lineno(1))
+    else:
+        p[0] = ('println', p[3], p.lineno(1))
 
 def p_if_statement(p):
     '''if_statement : IF LPAREN expression RPAREN block elseif_list else_block'''
@@ -112,7 +118,7 @@ def p_expression(p):
                   | NOT expression %prec NOT
                   | MINUS expression %prec UMINUS
                   | function_call
-                  | lambda_call'''
+                  | anonymous_function'''
 
     if len(p) == 2:
         p[0] = p[1]
@@ -135,15 +141,11 @@ def p_argument_list(p):
 
 def p_lambda_expression(p):
     '''lambda_expression : IDENTIFIER ASSIGN anonymous_function SEMICOLON'''
-    p[0] = ('lambda', p[1], p[5], p[9], p.lineno(1))
+    p[0] = ('lambda', p[1], p[3], p.lineno(1))
 
 def p_anonymous_function(p):
     '''anonymous_function : LAMBDA LPAREN parameter_list RPAREN COLON LBRACE expression RBRACE'''
-    p[0] = ('lambda', "_", p[3], p[7], p.lineno(1))
-
-def p_lambda_call(p):
-    '''lambda_call : IDENTIFIER LBRACE argument_list RBRACE'''
-    p[0] = ('call_lambda', p[1], p[3], p.lineno(1))
+    p[0] = ('anonymous', p[3], p[7], p.lineno(1))
 
 def p_function_call(p):
     '''function_call : IDENTIFIER LPAREN argument_list RPAREN'''
@@ -165,4 +167,4 @@ def p_error(p):
         print("Syntax error at EOF")
 
 parser = yacc.yacc()
-
+# parser = yacc.yacc(write_tables=False, debug=False)

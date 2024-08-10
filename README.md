@@ -97,7 +97,7 @@ False
 <summary>Function declaration and calling</summary>
 to declare a function you need to use the keyword 'zap', and to call on it write its name with the correct arguments.
 
-exaple:
+example:
 ```
 zap addNums(a,b){
     return a+b;
@@ -273,8 +273,8 @@ Line-By-Line Mode: (;!)
 
 And to close the application you can simply press what ever you know that closes application, <br />
 as it would most likely work here too!. <br/>
->q, Q, quit, Quit, exit, Exit, :wq, :q, :q! <br/>
-
+>q, quit, Quit, exit, Exit, :wq, :q, :q! <br/>
+ 
 all this will get you out.
 
 ```
