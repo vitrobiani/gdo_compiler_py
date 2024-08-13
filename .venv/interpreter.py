@@ -13,6 +13,7 @@ class Interpreter:
         self.variables = {}
         self.functions = {}
 
+
     def interpret(self, node):
         if node[0] == 'program':
             for stmt in node[1]:
