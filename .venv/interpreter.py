@@ -63,7 +63,10 @@ class Interpreter:
             # self.functions[node[1]] = (node[2], [('return',node[3])])
             self.variables[node[1]] = ('lambda',node[2])
         elif node[0] == 'call':
-            self.evaluate(node)
+            try:
+                self.evaluate(node)
+            except Exception as e:
+                raise Exception(f'{e}, at line number {node[-1]}')
 
 
     def evaluate(self, node):
@@ -91,20 +94,52 @@ class Interpreter:
                 raise TypeError(f"'{node[2]}' Wrong Type")
             return self.evaluate(node[1]) + self.evaluate(node[2])
         elif node[0] == '-':
+            if isinstance(self.evaluate(node[1]), bool):
+                raise TypeError(f"'{node[1]}' Wrong Type")
+            if isinstance(self.evaluate(node[2]), bool):
+                raise TypeError(f"'{node[2]}' Wrong Type")
             return self.evaluate(node[1]) - self.evaluate(node[2])
         elif node[0] == '*':
+            if isinstance(self.evaluate(node[1]), bool):
+                raise TypeError(f"'{node[1]}' Wrong Type")
+            if isinstance(self.evaluate(node[2]), bool):
+                raise TypeError(f"'{node[2]}' Wrong Type")
             return self.evaluate(node[1]) * self.evaluate(node[2])
         elif node[0] == '/':
+            if isinstance(self.evaluate(node[1]), bool):
+                raise TypeError(f"'{node[1]}' Wrong Type")
+            if isinstance(self.evaluate(node[2]), bool):
+                raise TypeError(f"'{node[2]}' Wrong Type")
             return (int) (self.evaluate(node[1]) / self.evaluate(node[2]))
         elif node[0] == '%':
+            if isinstance(self.evaluate(node[1]), bool):
+                raise TypeError(f"'{node[1]}' Wrong Type")
+            if isinstance(self.evaluate(node[2]), bool):
+                raise TypeError(f"'{node[2]}' Wrong Type")
             return self.evaluate(node[1]) % self.evaluate(node[2])
         elif node[0] == '>':
+            if isinstance(self.evaluate(node[1]), bool):
+                raise TypeError(f"'{node[1]}' Wrong Type")
+            if isinstance(self.evaluate(node[2]), bool):
+                raise TypeError(f"'{node[2]}' Wrong Type")
             return self.evaluate(node[1]) > self.evaluate(node[2])
         elif node[0] == '<':
+            if isinstance(self.evaluate(node[1]), bool):
+                raise TypeError(f"'{node[1]}' Wrong Type")
+            if isinstance(self.evaluate(node[2]), bool):
+                raise TypeError(f"'{node[2]}' Wrong Type")
             return self.evaluate(node[1]) < self.evaluate(node[2])
         elif node[0] == '>=':
+            if isinstance(self.evaluate(node[1]), bool):
+                raise TypeError(f"'{node[1]}' Wrong Type")
+            if isinstance(self.evaluate(node[2]), bool):
+                raise TypeError(f"'{node[2]}' Wrong Type")
             return self.evaluate(node[1]) >= self.evaluate(node[2])
         elif node[0] == '<=':
+            if isinstance(self.evaluate(node[1]), bool):
+                raise TypeError(f"'{node[1]}' Wrong Type")
+            if isinstance(self.evaluate(node[2]), bool):
+                raise TypeError(f"'{node[2]}' Wrong Type")
             return self.evaluate(node[1]) <= self.evaluate(node[2])
         elif node[0] == '==':
             return self.evaluate(node[1]) == self.evaluate(node[2])

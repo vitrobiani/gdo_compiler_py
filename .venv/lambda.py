@@ -10,8 +10,8 @@ interpreter = Interpreter()
 command_history = []
 
 # Filling command history for easier use
-command_history.append(("foo = lambda(a):{lambda(b):{a+b}};", 0))
-command_history.append(("println((foo(5))(6));", 0))
+command_history.append(("foo = lambda(a,b):{a+b};", 0))
+command_history.append(("println(foo(5,6));", 0))
 
 def interpret_code(code, add_to_command_history):
     err = 0
