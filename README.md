@@ -10,19 +10,17 @@ TODO Compiler:
 - [X] Perform comparison operations (>, <, ==. >=, <=)
 - [X] Named functions
 - [X] Basic lambda expressions
-- [ ] advanced lambda expressions (her example and lambda expressions that can be given to functions as args)
 - [X] Function application (function calling)
 - [X] Recursion 
 - [X] Interpreter mode like python
 - [X] Files need to end in .lambda
-- [ ] Type errors
-- [ ] Comprehensive errors (line numbers)
+- [X] Type errors
+- [X] Comprehensive errors (line numbers)
 - [X] (optional) Comments
-- [ ] Function return nothing not working properly
+- [X] return nothing not working properly
 - [X] Fix the redo problem
-- [X] fix forced interruption
-- [ ] 
-- [ ] 
+* [X] fix forced interruption
+* [X] Function definitions inside functions (scope works!)
 
 
 TODO Part B:
@@ -31,6 +29,9 @@ TODO Part B:
 - [ ] Question 3 (Q3)
 - [ ] Question 4 (Q4)
 - [ ] Question 5 (Q5)
+- [ ] Question 6 (Q5)
+- [ ] Question 7 (Q5)
+- [ ] Question 8 (Q5)
 
 ***
 
@@ -52,7 +53,23 @@ exaple:
 x = True;
 y = False;
 ```
+
+## Lambda Operations
+You could also assign lambda operations in a similar way you might know from python:
+```
+foo = lambda(a,b):{a+b};
+```
+As you can see you define a lambda expression by assigning it to a variable (foo in this case), <br />
+
+you use the key word lambda to signify this is a lambda expression, assign the expected arguments (a,b in this case), <br />
+
+colon and then in braces you put the expression you want to be activated and returned.<b />
+
+Here is another example
+
+
 </details>
+<br /> 
 <details>
 
 <summary>Writing to the screen</summary>
@@ -80,6 +97,7 @@ output:
 ```
 25
 ```
+
 ### Printing a Boolean 
 You could put a boolean expression in the print function like so:
 ```
@@ -92,6 +110,7 @@ output:
 False
 ```
 </details>
+<br /> 
 <details>
 
 <summary>Function declaration and calling</summary>
@@ -135,12 +154,77 @@ output:
 ```
 8
 ```
+### Functions return 
+Functions can return an int:
+```
+zap exp(a){
+    return a*a;
+}
+println(4);
+```
+
+output:
+```
+16
+```
+And can return a boolean value:
+```
+zap eq(a,b){
+    return a == b;
+}
+println(eq(6,6));
+```
+output:
+```
+True
+```
+And their values can be used just like any other value for calculation or logic:
+```
+zap eq(a,b){
+    return a == b;
+}
+
+zap factorial(n){
+    if(eq(0,n)) { return 1; } # logic
+    return n * factorial(n-1);
+}
+println(factorial(4)*5); # calculation
+```
+output:
+```
+120
+```
+### Functions within functions
+You could declare functions within functions, like so:
+```
+zap roo(a){
+    zap roo1(b){
+        return a+b;
+    }
+    return roo1(8);
+}
+# this line would work
+println(roo(5));
+# this line should not work since the function was defined in the scope of the other function
+println(roo1(8));
+```
+The var 'a' is global in the eyes of roo1 but local in terms of program.<b/>
+The function roo1 is also local and cannot be called outside its scope. <b/>
+
+output:
+```
+13
+Error: Function 'roo1' is not defined, at line number 10
+```
+
+
 </details>
+<br/>
 <details>
 
 <summary>If statements</summary>
 
-You could perform if, elseif and else functions using: <br />
+You could perform if, elseif and else functions using these comparison binops: <br />
 greater then (>), <br />
 greater equal (>=),  <br />
 lesser then (<), <br />
@@ -163,7 +247,7 @@ output:
 ```
 False
 ```
-You can also use the and (&&), or (||) , not (!) signs
+You can also use these logical binops - and (&&), or (||):
 ```
 x = 10;
 y = x * 2;
@@ -191,7 +275,20 @@ output:
 10
 ```
 
+And use the unary not operation with the ! symbol:
+```
+x = 10;
+if(!False){
+  print(x);
+} 
+```
+output:
+```
+10
+```
+
 </details>
+<br/>
 <details>
 
 <summary>Line by line interpreter Mode</summary>
@@ -285,33 +382,36 @@ See You Later Aligator! (^_^)
 
 
 </details>
+<br/>
 <details>
 
 <summary>Compiling a code file</summary>
 
 To compile a file with code in it you first need to make sure that the file ends in .lambda <b />
 as the compiler won't accept any other suffix.
-The code must either be in the file of the compiler, <b />
+The code can either be in the directory of the compiler, <b />
 or you could run the compiler by referencing its exact location. <b />
-If you're on windows there is the option of activating the executable file with the code file. <b />
+If you're on windows there is the option of activating the executable with the code file as an argument. <b />
 
 > you could add the compiler directory to your system PATH but we won't do any of that
 
 ### Running the executable (windows only!)
-You can run the lambda.exe file or just double click like any other app.
+You can run the lambda.exe file through windows powershell with this command:
 ```commandline
-.\lambda.exe
+.\path\to\executable\lambda.exe code.lambda
 ```
+giving the executable the code file as an argument.
 
-### Code file in the compiler
+### Code file in the compiler directory
+As the code file is in the same directory as the compiler main file and so <b />
+you could run the python interpreter on the main file lambda.py giving it the code file (marked code.lambda)<b />
+as an argument.
 ```commandline
 python lambda.py code.lambda
 ```
-This is the easiest way as the code file is in the same directory as the compiler main file and so <b />
-you could run the python interpreter on the main file lambda.py giving it the code file (marked code.lambda)<b />
-as an argument.
 
 ### Code file outside the compiler directory
+In this case you will need to reference the compiler through its relative/absolute path.
 ```commandline
 python ./path/to/compiler/lambda.py ./path/to/code/code.lambda
 ```
@@ -325,6 +425,84 @@ As you can see it is possible to compile code anywhere in your system as long as
 
 
 </details>
+<br/>
 
 ***
 ## BNF Grammer
+```BNF
+program -> statement_list
+
+statement_list -> statement
+                | statement_list statement
+
+statement -> assignment_statement
+           | print_statement
+           | if_statement
+           | function_definition
+           | return_statement
+           | expression_statement
+           | lambda_expression
+
+assignment_statement -> IDENTIFIER ASSIGN expression SEMICOLON
+
+print_statement -> PRINTLN LPAREN expression RPAREN SEMICOLON
+                 | PRINTLN LPAREN empty RPAREN SEMICOLON
+                 | PRINT LPAREN expression RPAREN SEMICOLON
+                 | PRINT LPAREN empty SEMICOLON
+
+if_statement -> IF LPAREN expression RPAREN block elseif_list else_block
+
+elseif_list -> elseif_list elseif
+             | empty
+             
+elseif -> ELSEIF LPAREN expression RPAREN block
+
+else_block -> ELSE block
+            | empty
+
+block -> LBRACE statement_list RBRACE
+
+function_definition -> ZAP IDENTIFIER LPAREN parameter_list RPAREN block
+
+parameter_list -> IDENTIFIER
+                | parameter_list COMMA IDENTIFIER
+                | empty
+
+return_statement -> RETURN expression SEMICOLON
+
+expression_statement -> expression SEMICOLON
+
+expression -> NUMBER
+            | IDENTIFIER
+            | TRUE
+            | FALSE
+            | LPAREN expression RPAREN
+            | expression PLUS expression
+            | expression MINUS expression
+            | expression TIMES expression
+            | expression DIVIDE expression
+            | expression MODULO expression
+            | expression GT expression
+            | expression LT expression
+            | expression GE expression
+            | expression LE expression
+            | expression EQ expression
+            | expression NEQ expression
+            | expression AND expression
+            | expression OR expression
+            | NOT expression
+            | MINUS expression
+            | function_call
+
+argument_list -> expression
+                |argument_list COMMA expression
+                |empty
+
+lambda_expression -> IDENTIFIER ASSIGN anonymous_function SEMICOLON
+
+anonymous_function -> LAMBDA LPAREN parameter_list RPAREN COLON LBRACE expression RBRACE
+
+function_call -> IDENTIFIER LPAREN argument_list RPAREN
+
+empty -> <empty>
+```

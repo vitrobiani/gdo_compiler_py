@@ -1,5 +1,9 @@
 from lexer import tokens
+from interpreter import Interpreter
 import ply.yacc as yacc
+
+interpreter = Interpreter()
+functions = interpreter.getFunctions()
 
 precedence = (
     ('left', 'OR'),
@@ -89,7 +93,8 @@ def p_parameter_list(p):
         p[0] = p[1] + [p[3]]
 
 def p_return_statement(p):
-    '''return_statement : RETURN expression SEMICOLON'''
+    '''return_statement : RETURN expression SEMICOLON
+                        | RETURN empty SEMICOLON'''
     p[0] = ('return', p[2], p.lineno(1))
 
 def p_expression_statement(p):
@@ -117,8 +122,7 @@ def p_expression(p):
                   | expression OR expression
                   | NOT expression %prec NOT
                   | MINUS expression %prec UMINUS
-                  | function_call
-                  | anonymous_function'''
+                  | function_call'''
 
     if len(p) == 2:
         p[0] = p[1]
@@ -166,5 +170,5 @@ def p_error(p):
     else:
         print("Syntax error at EOF")
 
-parser = yacc.yacc()
-# parser = yacc.yacc(write_tables=False, debug=False)
+# parser = yacc.yacc()
+parser = yacc.yacc(write_tables=False, debug=False)

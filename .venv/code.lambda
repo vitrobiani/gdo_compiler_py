@@ -1,29 +1,54 @@
-addNums = lambda (a,b):{a+b};
-x = addNums(3, 5);
-
-#zap addNums(a,b){
-#    return a+b;
-#}
-
 zap Loop(n) {
-    if (n == 0) {
-        return 1;
+    if (n < 0) {
+        return;
     }
     print(n);
     Loop(n-1);
 }
 Loop(5);
 
+zap isEqual(a,b){
+    return a == b;
+}
+
+# recursion, function calls within other functions
+addNums = lambda (a,b):{a+b};
 zap fib(n) {
-    if (n == 0) { return 0; }
-    if (n == 1) { return 1; }
+    if (isEqual(n,0)) { return 0; }
+    if (isEqual(1,n)) { return 1; }
     return addNums(fib(n - 1), fib(n - 2));
 }
 println();
 println(fib(8));
 
+# lambdas defined in the global scope can be called anywhere
+eq = lambda(a,b):{a == b};
 zap factorial(n){
-    if(n==0) { return 1; }
+    if(eq(0,n)) { return 1; }
     return n * factorial(n-1);
 }
 println(factorial(5));
+
+# function that receives no args
+zap func(){
+    foo = lambda(a):{a*a};
+    return foo(5);
+}
+println(func());
+
+# this should not work since the lambda expression was defines in the scope of the function
+# println(foo(4));
+
+# functions can be called in other functions and their args there  are
+# local but "global" in the eyes of the inner functions and can be used by it.
+zap roo(a){
+    zap roo1(b){
+        return a+b;
+    }
+    return roo1(8);
+}
+
+#this line would work
+println(roo(5));
+# this line should not work since the function was defined in the scope of the other function
+println(roo1(8));

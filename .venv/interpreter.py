@@ -2,16 +2,20 @@ class ReturnException(Exception):
     def __init__(self, value):
         self.value = value
 
+
 class FunctionParameters(Exception):
     pass
 
+
 class BlankException(Exception):
     pass
+
 
 class Interpreter:
     def __init__(self):
         self.variables = {}
         self.functions = {}
+
 
     def interpret(self, node):
         if node[0] == 'program':
@@ -51,9 +55,10 @@ class Interpreter:
             except Exception as e:
                 raise Exception(f'{e}, at line number {node[-1]}')
         elif node[0] == 'return':
-            if node[1] == None:
-                return
-            raise ReturnException(self.evaluate(node[1]))
+            if node[1] is None:
+                self.interpret(('return', node[2]))
+            else:
+                raise ReturnException(self.evaluate(node[1]))
         elif node[0] == 'expression_statement':
             try:
                 self.evaluate(node[1])
@@ -61,13 +66,12 @@ class Interpreter:
                 raise Exception(f'{e}, at line number {node[-1]}')
         elif node[0] == 'lambda':
             # self.functions[node[1]] = (node[2], [('return',node[3])])
-            self.variables[node[1]] = ('lambda',node[2])
+            self.variables[node[1]] = ('lambda', node[2])
         elif node[0] == 'call':
             try:
                 self.evaluate(node)
             except Exception as e:
                 raise Exception(f'{e}, at line number {node[-1]}')
-
 
     def evaluate(self, node):
         if isinstance(node, int) or isinstance(node, bool):
@@ -81,73 +85,50 @@ class Interpreter:
                 return False
             else:
                 raise NameError(f"Undefined variable '{node}'")
-        elif node == None:
-            raise BlankException("Blank space where it shoudn't be")
+        elif node is None:
+            raise BlankException("Blank space where it shouldn't be")
         if node[0] == 'not':
             return not self.evaluate(node[1])
         elif node[0] == 'uminus':
             return -self.evaluate(node[1])
         elif node[0] == '+':
-            if isinstance(self.evaluate(node[1]), bool):
-                raise TypeError(f"'{node[1]}' Wrong Type")
-            if  isinstance(self.evaluate(node[2]), bool):
-                raise TypeError(f"'{node[2]}' Wrong Type")
+            self.nodeCheckTypeBinopInt(node)
             return self.evaluate(node[1]) + self.evaluate(node[2])
         elif node[0] == '-':
-            if isinstance(self.evaluate(node[1]), bool):
-                raise TypeError(f"'{node[1]}' Wrong Type")
-            if isinstance(self.evaluate(node[2]), bool):
-                raise TypeError(f"'{node[2]}' Wrong Type")
+            self.nodeCheckTypeBinopInt(node)
             return self.evaluate(node[1]) - self.evaluate(node[2])
         elif node[0] == '*':
-            if isinstance(self.evaluate(node[1]), bool):
-                raise TypeError(f"'{node[1]}' Wrong Type")
-            if isinstance(self.evaluate(node[2]), bool):
-                raise TypeError(f"'{node[2]}' Wrong Type")
+            self.nodeCheckTypeBinopInt(node)
             return self.evaluate(node[1]) * self.evaluate(node[2])
         elif node[0] == '/':
-            if isinstance(self.evaluate(node[1]), bool):
-                raise TypeError(f"'{node[1]}' Wrong Type")
-            if isinstance(self.evaluate(node[2]), bool):
-                raise TypeError(f"'{node[2]}' Wrong Type")
-            return (int) (self.evaluate(node[1]) / self.evaluate(node[2]))
+            self.nodeCheckTypeBinopInt(node)
+            return (int)(self.evaluate(node[1]) / self.evaluate(node[2]))
         elif node[0] == '%':
-            if isinstance(self.evaluate(node[1]), bool):
-                raise TypeError(f"'{node[1]}' Wrong Type")
-            if isinstance(self.evaluate(node[2]), bool):
-                raise TypeError(f"'{node[2]}' Wrong Type")
+            self.nodeCheckTypeBinopInt(node)
             return self.evaluate(node[1]) % self.evaluate(node[2])
         elif node[0] == '>':
-            if isinstance(self.evaluate(node[1]), bool):
-                raise TypeError(f"'{node[1]}' Wrong Type")
-            if isinstance(self.evaluate(node[2]), bool):
-                raise TypeError(f"'{node[2]}' Wrong Type")
+            self.nodeCheckTypeBinopInt(node)
             return self.evaluate(node[1]) > self.evaluate(node[2])
         elif node[0] == '<':
-            if isinstance(self.evaluate(node[1]), bool):
-                raise TypeError(f"'{node[1]}' Wrong Type")
-            if isinstance(self.evaluate(node[2]), bool):
-                raise TypeError(f"'{node[2]}' Wrong Type")
+            self.nodeCheckTypeBinopInt(node)
             return self.evaluate(node[1]) < self.evaluate(node[2])
         elif node[0] == '>=':
-            if isinstance(self.evaluate(node[1]), bool):
-                raise TypeError(f"'{node[1]}' Wrong Type")
-            if isinstance(self.evaluate(node[2]), bool):
-                raise TypeError(f"'{node[2]}' Wrong Type")
+            self.nodeCheckTypeBinopInt(node)
             return self.evaluate(node[1]) >= self.evaluate(node[2])
         elif node[0] == '<=':
-            if isinstance(self.evaluate(node[1]), bool):
-                raise TypeError(f"'{node[1]}' Wrong Type")
-            if isinstance(self.evaluate(node[2]), bool):
-                raise TypeError(f"'{node[2]}' Wrong Type")
+            self.nodeCheckTypeBinopInt(node)
             return self.evaluate(node[1]) <= self.evaluate(node[2])
         elif node[0] == '==':
+            self.nodeCheckTypeBinopInt(node)
             return self.evaluate(node[1]) == self.evaluate(node[2])
         elif node[0] == '!=':
+            self.nodeCheckTypeBinopInt(node)
             return self.evaluate(node[1]) != self.evaluate(node[2])
         elif node[0] == '&&':
+            self.nodeCheckTypeBinopBool(node)
             return self.evaluate(node[1]) and self.evaluate(node[2])
         elif node[0] == '||':
+            self.nodeCheckTypeBinopBool(node)
             return self.evaluate(node[1]) or self.evaluate(node[2])
         elif node[0] == 'call':
             try:
@@ -161,14 +142,17 @@ class Interpreter:
             if len(params) != len(args):
                 raise FunctionParameters(f"Function '{name}' expects {len(params)} arguments but got {len(args)}")
             local_vars = self.variables.copy()
-            for param, arg in zip(params, args):
-                self.variables[param] = self.evaluate(arg)
+            local_funcs = self.functions.copy()
+            if params[0] is not None:
+                for param, arg in zip(params, args):
+                    self.variables[param] = self.evaluate(arg)
             try:
                 self.interpret(('program', body))
             except ReturnException as e:
                 return e.value
             finally:
                 self.variables = local_vars
+                self.functions = local_funcs
         elif name in self.variables:
             lambda_info = self.variables[name]
             if lambda_info[0] == 'lambda':
@@ -188,5 +172,21 @@ class Interpreter:
             return self.evaluate(body)
         finally:
             self.variables = local_vars
+
+    def nodeCheckTypeBinopInt(self, node):
+        if isinstance(self.evaluate(node[1]), bool):
+            raise TypeError(f"'{node[1]}' Wrong Type")
+        if isinstance(self.evaluate(node[2]), bool):
+            raise TypeError(f"'{node[2]}' Wrong Type")
+
+    def nodeCheckTypeBinopBool(self, node):
+        if not isinstance(self.evaluate(node[1]), bool):
+            raise TypeError(f"'{node[1]}' Wrong Type")
+        if not isinstance(self.evaluate(node[2]), bool):
+            raise TypeError(f"'{node[2]}' Wrong Type")
+
+    def getFunctions(self):
+        return self.functions
+
 
 interpreter = Interpreter()
