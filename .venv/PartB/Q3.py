@@ -1,13 +1,29 @@
 from functools import reduce
 #Q3
+#cumulative_sums_of_squares = lambda lst: list(
+#    map(
+#        lambda sublist: reduce(
+#            lambda acc, x: acc + x ** 2,
+#            filter(lambda x: x % 2 == 0, sublist),
+#            [0],
+#        )[1:],
+#        lst,
+#    )
+#)
 cumulative_sums_of_squares = lambda lst: list(
     map(
         lambda sublist: reduce(
-            lambda acc, x: acc + [acc[-1] + x ** 2],
-            filter(lambda x: x % 2 == 0, sublist),
-            [0],
-        )[1:],
-        lst,
+            lambda acc, x: acc + x,
+            map(
+                lambda y: y ** 2,
+                filter(
+                    lambda z: z % 2 == 0,
+                    sublist
+                )
+            ),
+            0
+        ),
+        lst
     )
 )
 print("question 3:")
