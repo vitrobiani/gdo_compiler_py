@@ -1,17 +1,13 @@
-import re,sys,signal,time
-from pyreadline3 import Readline
+import re, sys, signal, time
 from lexer import lexer
 from parser import parser
 from interpreter import Interpreter
 
-exittime = .5
+exittime = 1
 exit_symbol = ["quit", "exit", "q", "e", ":q", ":wq", ":q!", "c", "x"]
 interpreter = Interpreter()
 command_history = []
 
-# Filling command history for easier use
-command_history.append(("foo = lambda(a,b):{a+b};", 0))
-command_history.append(("println(foo(5,6));", 0))
 
 def interpret_code(code, add_to_command_history):
     err = 0
@@ -24,7 +20,7 @@ def interpret_code(code, add_to_command_history):
         print(f"Error: {e}")
 
     if add_to_command_history:
-        command_history.append((code,err))
+        command_history.append((code, err))
 
 
 def main():
@@ -50,6 +46,7 @@ def handler(signum, frame):
           "\nGoodbye!")
     time.sleep(exittime)
     sys.exit(0)
+
 
 def line_by_line():
     while True:
@@ -86,13 +83,34 @@ def line_by_line():
                 for i in range(len(ch)):
                     command_history.append(ch.pop())
                 continue
-        # elif re.fullmatch(r'q[1-8]]', s):
-        #     match s:
-        #         case 'q1':
-        #             print(q1)
-        #         case _:
-        #             print("Something went wrong.")
-
+        elif re.fullmatch(r'^q[1-8]$', s):
+            match s:
+                case 'q1':
+                    from PartB import Q1
+                    continue
+                case 'q2':
+                    from PartB import Q2
+                    continue
+                case 'q3':
+                    from PartB import Q3
+                    continue
+                case 'q4':
+                    from PartB import Q4
+                    continue
+                case 'q5':
+                    from PartB import Q5
+                    continue
+                case 'q6':
+                    from PartB import Q6
+                    continue
+                case 'q7':
+                    from PartB import Q7
+                    continue
+                case 'q8':
+                    from PartB import Q8
+                    continue
+                case _:
+                    print("Something went wrong.")
 
         interpret_code(s, add_to_command_history)
 

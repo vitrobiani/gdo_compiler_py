@@ -51,4 +51,4 @@ zap roo(a){
 #this line would work
 println(roo(5));
 # this line should not work since the function was defined in the scope of the other function
-println(roo1(8));
+# println(roo1(8));

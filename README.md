@@ -29,9 +29,9 @@ TODO Part B:
 - [X] Question 3 (Q3)
 - [X] Question 4 (Q4)
 - [X] Question 5 (Q5)
-- [X] Question 6 (Q5)
-- [X] Question 7 (Q5)
-- [X] Question 8 (Q5)
+- [X] Question 6 (Q6)
+- [X] Question 7 (Q7)
+- [X] Question 8 (Q8)
 
 ***
 
