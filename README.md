@@ -24,14 +24,14 @@ TODO Compiler:
 
 
 TODO Part B:
-- [ ] Question 1 (Q1)
-- [ ] Question 2 (Q2)
-- [ ] Question 3 (Q3)
-- [ ] Question 4 (Q4)
-- [ ] Question 5 (Q5)
-- [ ] Question 6 (Q5)
-- [ ] Question 7 (Q5)
-- [ ] Question 8 (Q5)
+- [X] Question 1 (Q1)
+- [X] Question 2 (Q2)
+- [X] Question 3 (Q3)
+- [X] Question 4 (Q4)
+- [X] Question 5 (Q5)
+- [X] Question 6 (Q5)
+- [X] Question 7 (Q5)
+- [X] Question 8 (Q5)
 
 ***
 

@@ -1,4 +1,5 @@
+from functools import reduce
 #Q2
-concatenate = lambda lst: lst[0] if len(lst) == 1 else lst[0] + " " + (lambda x: x(lst[1:]))(concatenate)
+concatenate = lambda lst: reduce(lambda x, y: x + ' ' + y, lst)
 print("question 2:")
 print(concatenate(["This", "is", "a", "test"]))
